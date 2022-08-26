@@ -9,7 +9,25 @@ describe('Sample', () => {
     renderer.create(<App />);
   });
 
-  it('test TextInput native', () => {
+  it('test TextInput native by placeholder', () => {
+    const handleFocus = jest.fn();
+
+    const result = render(
+      <TextInput
+        placeholder="my-input"
+        onFocus={handleFocus}
+        editable={false}
+      />,
+    );
+
+    const rnTextInput = result.getByPlaceholderText('my-input');
+
+    fireEvent(rnTextInput, 'focus');
+
+    expect(handleFocus).not.toBeCalled(); // pass
+  });
+
+  it('test TextInput native by testID', () => {
     const handleFocus = jest.fn();
 
     const result = render(
@@ -20,6 +38,6 @@ describe('Sample', () => {
 
     fireEvent(rnTextInput, 'focus');
 
-    expect(handleFocus).not.toBeCalled();
+    expect(handleFocus).not.toBeCalled(); // fail
   });
 });
