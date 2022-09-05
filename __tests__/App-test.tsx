@@ -1,15 +1,10 @@
 import React from 'react';
-import App from '../App';
 import {render, fireEvent} from '@testing-library/react-native';
-import renderer from 'react-test-renderer';
-import {TextInput} from 'react-native';
+import {TextInput, TextInputProps} from 'react-native';
+import {ThemeType, withTheme} from '../theme';
 
 describe('Sample', () => {
-  it('renders correctly', () => {
-    renderer.create(<App />);
-  });
-
-  it('test TextInput native by placeholder', () => {
+  it('test getByPlaceholderText TextInput native', () => {
     const handleFocus = jest.fn();
 
     const result = render(
@@ -27,7 +22,7 @@ describe('Sample', () => {
     expect(handleFocus).not.toBeCalled(); // pass
   });
 
-  it('test TextInput native by testID', () => {
+  it('test getByTestId TextInput native', () => {
     const handleFocus = jest.fn();
 
     const result = render(
@@ -39,5 +34,56 @@ describe('Sample', () => {
     fireEvent(rnTextInput, 'focus');
 
     expect(handleFocus).not.toBeCalled(); // fail
+  });
+
+  it('test getByPlaceholderText TextInput native with custom component', () => {
+    const CustomTextInput: React.FC<{label: string} & TextInputProps> = ({
+      label,
+      ...others
+    }) => {
+      return <TextInput {...others} placeholder={label} />;
+    };
+
+    const handleFocus = jest.fn();
+
+    const result = render(
+      <CustomTextInput
+        label="my-input"
+        onFocus={handleFocus}
+        editable={false}
+      />,
+    );
+
+    const rnTextInput = result.getByPlaceholderText('my-input');
+
+    fireEvent(rnTextInput, 'focus');
+
+    expect(handleFocus).not.toBeCalled(); // pass
+  });
+
+  it('test getByPlaceholderText TextInput native withTheme', () => {
+    const CustomTextInput: React.FC<
+      {label: string; theme: ThemeType} & TextInputProps
+    > = ({label, ...others}) => {
+      return <TextInput {...others} placeholder={label} />;
+    };
+
+    const CustomInputWithTheme = withTheme(CustomTextInput);
+
+    const handleFocus = jest.fn();
+
+    const result = render(
+      <CustomInputWithTheme
+        label="my-input"
+        onFocus={handleFocus}
+        editable={false}
+      />,
+    );
+
+    const rnTextInput = result.getByPlaceholderText('my-input');
+
+    fireEvent(rnTextInput, 'focus');
+
+    expect(handleFocus).not.toBeCalled(); // <--- fail
   });
 });
