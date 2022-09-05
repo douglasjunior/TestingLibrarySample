@@ -1,7 +1,7 @@
 import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
 import {TextInput, TextInputProps} from 'react-native';
-import {ThemeType, withTheme} from '../theme';
+import {ThemeProvider, ThemeType, withTheme} from '../theme';
 
 describe('Sample', () => {
   it('test getByPlaceholderText TextInput native', () => {
@@ -73,11 +73,13 @@ describe('Sample', () => {
     const handleFocus = jest.fn();
 
     const result = render(
-      <CustomInputWithTheme
-        label="my-input"
-        onFocus={handleFocus}
-        editable={false}
-      />,
+      <ThemeProvider>
+        <CustomInputWithTheme
+          label="my-input"
+          onFocus={handleFocus}
+          editable={false}
+        />
+      </ThemeProvider>,
     );
 
     const rnTextInput = result.getByPlaceholderText('my-input');
